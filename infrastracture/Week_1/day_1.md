@@ -16,5 +16,7 @@ has more usefull informations about designing the instagram in the backend.
 - **Nginx** : Web server that runs on the os and forward the request to gunicorn
 - **Celery** : Tool for running the background tasks.
 - **RabbitMQ** : Act as a message broker.
+- **Apache Cassandra** : NoSQL distributed database for storing large data.
+- **AWS** : For deploy the backend services.
 
 ### And there is more things you can found it all [from here](https://medium.com/@shaini4020/instagram-tech-stack-f19ddd4dcc0d) 
