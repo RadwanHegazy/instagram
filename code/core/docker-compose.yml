@@ -1,0 +1,45 @@
+name: instagram
+
+services:
+
+  # Django Application
+  web:
+    
+    build: .
+    command: python manage.py runserver  0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    # env_file:
+    #   - core/.env
+    depends_on:
+      - db
+      - redis
+    restart: always
+      
+  # PostgreSQL Database
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "instagram"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+  
+  # Redis Server
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+
+volumes:
+  pg_data:
+  redis_data:
+
