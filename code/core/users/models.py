@@ -17,7 +17,8 @@ class User (AbstractUser) :
     following_count = models.IntegerField(default=0)
     followers = models.ManyToManyField('users.User', related_name='user_followers', blank=True)
     followings = models.ManyToManyField('users.User', related_name='user_followings', blank=True)
-
+    
+    extra_fields = models.JSONField(blank=True, null=True)
 
     def __str__(self):
         return self.full_name

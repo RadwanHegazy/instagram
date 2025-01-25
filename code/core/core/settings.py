@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from globals.social_auth_saver import custom_save_data
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +43,7 @@ BUILTIN_APPS = [
 
 LOCAL_APPS = [
     'users',
+    'social_auth'
 ]
 
 THIRD_PARTY_APPS = [
@@ -91,7 +93,7 @@ DATABASES = {
         'NAME': 'instagram', 
         'USER': 'postgres', 
         'PASSWORD': 'postgres',
-        'HOST': 'db',
+        'HOST': os.environ.get('DB_HOST','localhost'),
         'PORT': '5432',
     }
 }
@@ -151,3 +153,13 @@ AUTH_USER_MODEL = 'users.User'
 
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
+
+
+SOCIAL_AUTH = {
+    'facebook' : {
+        'client_id' : os.environ.get("FB_CLIENT_ID"),
+        'client_secret' : os.environ.get("FB_CLIENT_SECRET"),
+        'redirect_url' : os.environ.get('FRONTEND_END_SERVER_REDIRECT_URL'), # your frontend server,
+        'save_user_data' : custom_save_data
+    },
+}
