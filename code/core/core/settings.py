@@ -43,7 +43,8 @@ BUILTIN_APPS = [
 
 LOCAL_APPS = [
     'users',
-    'social_auth'
+    'social_auth',
+    'posts'
 ]
 
 THIRD_PARTY_APPS = [
