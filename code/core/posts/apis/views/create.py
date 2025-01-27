@@ -9,5 +9,5 @@ class CreatePostView (CreateAPIView) :
     def get_serializer_context(self):
         return {
             'owner' : self.request.user,
-            'images' : self.request.FILES
+            'images' : self.request.FILES.getlist('images', [])
         }

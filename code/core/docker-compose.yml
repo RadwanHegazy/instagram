@@ -28,6 +28,7 @@ services:
       POSTGRES_DB: "instagram"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
+
     volumes:
       - pg_data:/var/lib/postgresql/data/
     ports:
