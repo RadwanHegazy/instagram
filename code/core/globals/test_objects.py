@@ -1,6 +1,5 @@
-from users.models import User
 from rest_framework_simplejwt.tokens import AccessToken
-
+from posts.models import Post, User
 
 def create_user (
         username = 'test',
@@ -30,4 +29,14 @@ def create_token_headers(user=None) :
         'Authorization' : f"Bearer {tokens}"
     }
 
-    
+
+def create_post(user=None) : 
+    if not user:
+        user = create_user()
+
+    p = Post.objects.create(
+        body='test',
+        owner=user
+    )
+    p.save()
+    return p

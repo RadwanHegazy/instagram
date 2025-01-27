@@ -4,6 +4,6 @@ from globals.permissions import IsPostOwner
 
 class DeletePostView (DestroyAPIView) : 
     serializer_class = PostsSerializer
-    queryset = Post.objects.all()
     permission_classes = [IsPostOwner]
     lookup_field = 'id'
+    queryset = Post.objects.all()

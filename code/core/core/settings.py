@@ -144,10 +144,16 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
+
+    # JWT for authentication 
     'DEFAULT_AUTHENTICATION_CLASSES' : [
-        # use JWT for authentication 
         'rest_framework_simplejwt.authentication.JWTAuthentication'
-    ]
+    ],
+    
+    # for pagination
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    "PAGE_SIZE" : 10
+
 }
 
 AUTH_USER_MODEL = 'users.User'
@@ -163,4 +169,14 @@ SOCIAL_AUTH = {
         'redirect_url' : os.environ.get('FRONTEND_END_SERVER_REDIRECT_URL'), # your frontend server,
         'save_user_data' : custom_save_data
     },
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.environ.get("REDIS_URL"),  
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
 }

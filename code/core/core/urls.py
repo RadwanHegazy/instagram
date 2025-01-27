@@ -22,6 +22,8 @@ from core import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('users.apis.urls')),
+    path('posts/', include('posts.apis.urls')),
+    
 ]
 
 if settings.DEBUG:
