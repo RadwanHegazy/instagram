@@ -4,7 +4,7 @@ services:
 
   # Django Application
   web:
-    
+    container_name: web
     build: .
     command: python manage.py runserver  0.0.0.0:8000
     volumes:
@@ -23,6 +23,7 @@ services:
       
   # PostgreSQL Database
   db:
+    container_name: postgre_db
     image: postgres:latest
     environment:
       POSTGRES_DB: "instagram"
@@ -36,12 +37,22 @@ services:
   
   # Redis Server
   redis:
+    container_name: redis
     image: redis:latest
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
 
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A core worker --pool=solo
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
 
 volumes:
   pg_data:

@@ -1,8 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from globals.test_objects import create_token_headers, create_user, create_post
-import os
-import json
 
 class TestGetEndpoints(TestCase) : 
 
