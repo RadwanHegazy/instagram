@@ -1,16 +1,7 @@
 from rest_framework import serializers
 from ..models import Post, User, PostImage
 from rest_framework.validators import ValidationError
-
-class PostUserSerializer(serializers.ModelSerializer) : 
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'username',
-            'full_name',
-            'picture',
-        ]
+from users.apis.serializres import UserSerializer as PostUserSerializer
 
 class PostImagesSerializer (serializers.ModelSerializer):
     class Meta:

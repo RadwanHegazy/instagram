@@ -103,6 +103,7 @@ DATABASES = {
 
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -127,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'EET'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -183,9 +184,21 @@ CACHES = {
 }
 
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL","redis://localhost:6379/1")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379/2")
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'EET'
+CELERY_TIMEZONE = 'UTC'
+
+from datetime import timedelta
+
+# CELERY_IMPORTS = ('story.tasks.check_or_delete_story',)
+
+CELERY_BEAT_SCHEDULE = {
+    'check-stories-every-1-hours': {
+        'task': 'story.tasks.check_or_delete_story',  
+        # 'schedule': timedelta(hours=24).total_seconds()
+        'schedule': timedelta(minutes=0.5).total_seconds()
+    },
+}
