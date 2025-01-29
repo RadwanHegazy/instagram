@@ -64,4 +64,12 @@ class ProfileSerializer (serializers.ModelSerializer) :
         model = User
         exclude = ['password']
     
-    
+class UserSerializer(serializers.ModelSerializer) : 
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'full_name',
+            'picture',
+        ]
