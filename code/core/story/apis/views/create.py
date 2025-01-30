@@ -1,7 +1,7 @@
 from rest_framework.generics import CreateAPIView
 from ..serializers import CreateStorySerializer
 from rest_framework.permissions import IsAuthenticated
-
+import json
 
 class CreateStoryView (CreateAPIView) : 
     serializer_class = CreateStorySerializer
@@ -9,7 +9,7 @@ class CreateStoryView (CreateAPIView) :
 
     def get_serializer_context(self):
         return {
-            'user' : self.request.user
+            'user' : self.request.user,
         }
     
     def create(self, request, *args, **kwargs):

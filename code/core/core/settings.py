@@ -193,12 +193,14 @@ CELERY_TIMEZONE = 'UTC'
 
 from datetime import timedelta
 
-# CELERY_IMPORTS = ('story.tasks.check_or_delete_story',)
-
 CELERY_BEAT_SCHEDULE = {
     'check-stories-every-1-hours': {
         'task': 'story.tasks.check_or_delete_story',  
-        # 'schedule': timedelta(hours=24).total_seconds()
-        'schedule': timedelta(minutes=0.5).total_seconds()
+        'schedule': timedelta(hours=24).total_seconds()
     },
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }

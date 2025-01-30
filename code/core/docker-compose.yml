@@ -47,7 +47,8 @@ services:
   celery:
     build: .
     container_name: celery
-    command: celery -A core worker --pool=solo
+    command: sh run_celery.sh
+
     env_file:
       - .env
     depends_on:
@@ -56,6 +57,8 @@ services:
     restart: always
     environment:
       DB_HOST: "db"
+    volumes:
+      - .:/app
 
   celery_beat:
     build: .
@@ -69,6 +72,8 @@ services:
       - redis
       - db
       - celery
+    volumes:
+      - .:/app
 
 volumes:
   pg_data:

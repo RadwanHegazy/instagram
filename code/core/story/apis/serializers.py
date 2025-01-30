@@ -2,7 +2,9 @@ from ..models import Story
 from ..tasks import story_builder
 from rest_framework import serializers
 from users.apis.serializres import UserSerializer
-
+import json
+from uuid import uuid4
+from django.core.files.storage import FileSystemStorage
 
 class GetStorySerializer (serializers.ModelSerializer) :
     owner = UserSerializer()
@@ -12,26 +14,43 @@ class GetStorySerializer (serializers.ModelSerializer) :
         fields = '__all__'
 
 class CreateStorySerializer (serializers.Serializer) : 
-    controls = serializers.JSONField()
-    image = serializers.ImageField(required=False)
-    video = serializers.FileField(required=False)
+    text_list = serializers.CharField()
+    image = serializers.ImageField()
     
     class Meta:
         fields = [
-            'controls',
+            'text_list',
             'image',
-            'video'
         ]
     
     def validate(self, attrs):
-        attrs['user'] = self.context.get('user')
+        attrs['user_id'] = self.context.get('user').id
+        attrs['text_list'] = json.loads(attrs['text_list'])
         return attrs
 
     def save(self, **kwargs):
-        story_builder.delay(**self.validated_data)
+        text_list = self.validated_data['text_list']
+        text_list = [dict(i) for i in text_list]
 
+        image_obj = self.validated_data['image']
+        user_id = self.validated_data['user_id']
+
+        saved_image = FileSystemStorage(
+            location="media/story-imgs/"
+        )
+        
+        saved_image = saved_image.save(
+            image_obj.name,
+            image_obj
+        )
+
+        img_path = f"/media/story-imgs/{saved_image}"
+        
+        story_builder.delay(
+            user_id=user_id,
+            text_list=text_list,
+            image=img_path
+        )
 
     def to_representation(self, instance):
-        return {
-            'message' : "story created"
-        }
+        return {}
