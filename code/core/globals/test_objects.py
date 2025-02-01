@@ -1,5 +1,6 @@
 from rest_framework_simplejwt.tokens import AccessToken
-from posts.models import Post, User
+from posts.models import Post
+from story.models import Story, User
 
 def create_user (
         username = 'test',
@@ -11,6 +12,10 @@ def create_user (
     user.save()
     return user
 
+def create_story(user) -> Story:
+    return Story.objects.create(
+        owner=user,
+    ) 
 
 def create_access_token(user=None) : 
     if not user :
