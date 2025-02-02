@@ -26,12 +26,13 @@ SECRET_KEY = 'django-insecure-8qnh0pf7@wuai)w%-46nc&#uv065q*(x^d-8(i57on!_n@of21
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 BUILTIN_APPS = [
+    'daphne',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +47,7 @@ LOCAL_APPS = [
     'social_auth',
     'posts',
     'story',
+    'chat',
 ]
 
 THIRD_PARTY_APPS = [
@@ -83,7 +85,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+# WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
+
 
 
 # Database
