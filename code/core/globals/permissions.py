@@ -13,3 +13,17 @@ class IsPostOwner (BaseIsObjOwner) :
 
 class IsStoryOwner(BaseIsObjOwner) : 
     pass
+
+
+class IsMessageSender(BasePermission) : 
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_anonymous:
+            return False
+        return request.user == obj.sender
+    
+class InChatUsers(BasePermission) : 
+
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_anonymous:
+            return False
+        return request.user in obj.users.all()
