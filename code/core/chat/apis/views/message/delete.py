@@ -9,3 +9,4 @@ class DeleteMessageAPI (DestroyAPIView) :
 
     def get_queryset(self):
         return Message.objects.filter(sender=self.request.user)
+    

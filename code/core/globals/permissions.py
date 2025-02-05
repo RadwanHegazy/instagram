@@ -1,13 +1,12 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import IsAuthenticated
 
 
-class BaseIsObjOwner (BasePermission) : 
+class BaseIsObjOwner (IsAuthenticated) : 
 
     def has_object_permission(self, request, view, obj):
-        if request.user.is_anonymous:
-            return False
         return request.user == obj.owner
 
+    
 class IsPostOwner (BaseIsObjOwner) : 
     pass
 
@@ -15,15 +14,14 @@ class IsStoryOwner(BaseIsObjOwner) :
     pass
 
 
-class IsMessageSender(BasePermission) : 
-    def has_object_permission(self, request, view, obj):
-        if request.user.is_anonymous:
-            return False
-        return request.user == obj.sender
-    
-class InChatUsers(BasePermission) : 
+class IsMessageSender(IsAuthenticated) : 
 
     def has_object_permission(self, request, view, obj):
-        if request.user.is_anonymous:
-            return False
+        return request.user == obj.sender
+
+
+class InChatUsers(IsAuthenticated) : 
+
+    def has_object_permission(self, request, view, obj):
         return request.user in obj.users.all()
+    
