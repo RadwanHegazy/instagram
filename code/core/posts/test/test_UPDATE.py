@@ -14,7 +14,7 @@ class TestUpdateEndpoint(TestCase) :
         req = self.client.put(
             self.retrive_post_endpoint(1)
         )
-        self.assertEqual(req.status_code, 404)
+        self.assertEqual(req.status_code, 401)
 
     def test_UPDATE_not_found_post (self) : 
         req = self.client.put(
