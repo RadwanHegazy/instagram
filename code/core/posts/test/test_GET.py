@@ -1,102 +1,122 @@
 from django.test import TestCase
-from django.urls import reverse
-from globals.test_objects import create_token_headers, create_user, create_post
+from django.contrib.auth import get_user_model
+from graphene.test import Client
+from posts.models import Post
+from posts.apis.grapql.schema import posts_schema
+from globals.test_objects import create_token_headers
 
-class TestGetEndpoints(TestCase) : 
+User = get_user_model()
 
-    def retrive_post_endpoint(self, post_id) : 
-        return reverse('get_post_by_id',args=[post_id])
-    
-    def retrive_user_post_endpoint(self, username) : 
-        return reverse('user_posts', args=[username])
-    
+class TestPostSchemaTests(TestCase):
     def setUp(self):
-        self.get_all_posts_endpoint = reverse('all_posts')
-
-    def test_GET_unauthorized_user(self) : 
-        req = self.client.get(
-            self.get_all_posts_endpoint
+        # Create a test user
+        self.user = User.objects.create_user(username="testuser", password="testpass")
+        
+        # Create a test post
+        self.post = Post.objects.create(
+            body="This is a test post.",
+            owner=self.user
         )
-        self.assertEqual(req.status_code, 401)
+        
+        # Initialize the GraphQL client
+        self.client = Client(posts_schema)
 
-    def test_GET_authorized_user(self) :
-        req = self.client.get(
-            self.get_all_posts_endpoint,
-            headers=create_token_headers()
-        )
-        self.assertEqual(req.status_code, 200)
+    def test_resolve_user_timeline(self):
+        # Simulate authentication by passing the user in the context
+        query = """
+        query {
+            userTimeline {
+                id
+                body
+                owner {
+                    id
+                    username
+                }
+            }
+        }
+        """
+        executed = self.client.execute(query, context_value={"headers": create_token_headers(self.user) })
+        
+        self.assertNotIn("errors", executed)
+        self.assertEqual(len(executed["data"]["userTimeline"]), 0)
 
-    def test_GET_empty_posts(self) : 
-        user = create_user(username='test2')
-        user_headers = create_token_headers(user)
-        create_post()
-        req = self.client.get(
-            self.get_all_posts_endpoint,
-            headers=user_headers
-        )
-        self.assertEqual(req.json()['results'], [])
+    def test_resolve_get_post_by_id(self):
+        query = """
+        query GetPostById($postId: Int!) {
+            getPostById(postId: $postId) {
+                id
+                body
+                owner {
+                    username
+                }
+            }
+        }
+        """
+        variables = {"postId": self.post.id}
+        executed = self.client.execute(query, variables=variables)
+        
+        # Assert no errors
+        self.assertNotIn("errors", executed)
+        
+        # Assert the response matches the test post
+        self.assertEqual(executed["data"]["getPostById"]["id"], str(self.post.id))
+        self.assertEqual(executed["data"]["getPostById"]["body"], self.post.body)
+        self.assertEqual(executed["data"]["getPostById"]["owner"]["username"], self.user.username)
 
-    def test_GET_nonempty_posts(self) : 
-        user = create_user(username='test22313')
-        user_headers = create_token_headers(user)
-        friend = create_user(username='friend')
-        for i in range(10) :
-            p = create_post(friend)
-        user.followings.add(friend)
-        user.save()
-        req = self.client.get(
-            self.get_all_posts_endpoint,
-            headers=user_headers
-        )
-        self.assertNotEqual(req.json(), [])
+    def test_resolve_get_post_by_id_not_found(self):
+        query = """
+        query GetPostById($postId: Int!) {
+            getPostById(postId: $postId) {
+                id
+                body
+            }
+        }
+        """
+        variables = {"postId": 999}  # Non-existent post ID
+        executed = self.client.execute(query, variables=variables)
+        
+        # Assert errors
+        self.assertIn("errors", executed)
+        self.assertEqual(executed["errors"][0]["message"], "Post not found")
 
-    def test_GET_retrive_post_unauthorized(self) : 
-        req = self.client.get(
-            self.retrive_post_endpoint(1),
-        )
-        self.assertEqual(req.status_code, 401)
+    def test_resolve_get_post_by_owner_username(self):
+        query = """
+        query GetPostByOwnerUsername($postOwnerUsername: String!) {
+            getPostByOwnerUsername(postOwnerUsername: $postOwnerUsername) {
+                id
+                body
+                owner {
+                    username
+                }
+            }
+        }
+        """
+        variables = {"postOwnerUsername": self.user.username}
+        executed = self.client.execute(query, variables=variables)
+        
+        # Assert no errors
+        self.assertNotIn("errors", executed)
+        
+        # Assert the response matches the test post
+        self.assertEqual(len(executed["data"]["getPostByOwnerUsername"]), 1)
+        self.assertEqual(executed["data"]["getPostByOwnerUsername"][0]["id"], str(self.post.id))
+        self.assertEqual(executed["data"]["getPostByOwnerUsername"][0]["body"], self.post.body)
+        self.assertEqual(executed["data"]["getPostByOwnerUsername"][0]["owner"]["username"], self.user.username)
 
-    def test_GET_retrive_post_unfounded_post(self) : 
-        req = self.client.get(
-            self.retrive_post_endpoint(1),
-            headers=create_token_headers()
-        )
-        self.assertEqual(req.status_code, 404)
-    
-    
-    def test_GET_retrive_post_founded_post(self) : 
-        user = create_user(username='213')
-        post = create_post(user)
-        req = self.client.get(
-            self.retrive_post_endpoint(post.id),
-            headers=create_token_headers(user)
-        )
-        self.assertEqual(req.status_code, 200)
-
-    def test_GET_retrive_post_check_is_owner(self) : 
-        user = create_user(username='test22')
-        post = create_post(user)
-        req = self.client.get(
-            self.retrive_post_endpoint(post.id),
-            headers=create_token_headers(user)
-        )
-        self.assertEqual(req.json()['owner']['id'], user.id)
-
-
-    def test_GET_retrive_post_unfounded_user(self) : 
-        user = create_user(username='213d')
-        post = create_post(user)
-        req = self.client.get(
-            self.retrive_user_post_endpoint('91919')
-        )
-        self.assertEqual(req.status_code, 404)
-
-
-    def test_GET_retrive_post_founded_user(self) : 
-        user = create_user(username='213d')
-        post = create_post(user)
-        req = self.client.get(
-            self.retrive_user_post_endpoint(user.username)
-        )
-        self.assertEqual(req.status_code, 200)
-
+    def test_resolve_get_post_by_owner_username_not_found(self):
+        query = """
+        query GetPostByOwnerUsername($postOwnerUsername: String!) {
+            getPostByOwnerUsername(postOwnerUsername: $postOwnerUsername) {
+                id
+                body
+            }
+        }
+        """
+        variables = {"postOwnerUsername": "nonexistentuser"}  # Non-existent username
+        executed = self.client.execute(query, variables=variables)
+        
+        # Assert no errors
+        self.assertNotIn("errors", executed)
+        
+        # Assert the response is empty
+        self.assertEqual(len(executed["data"]["getPostByOwnerUsername"]), 0)
