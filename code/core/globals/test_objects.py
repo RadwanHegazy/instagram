@@ -2,6 +2,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from posts.models import Post
 from story.models import Story, User
 from chat.models import Chat, Message
+from notifications.models import Notification
 
 def create_user (
         username = 'test',
@@ -13,6 +14,8 @@ def create_user (
     user.save()
     return user
 
+def create_notification(sender, reciver, content='test') : 
+    return Notification.objects.create(sender=sender, reciver=reciver, content=content)
 
 def create_chat(u1 : User,  u2 : User) -> Chat:
     c = Chat.objects.create()

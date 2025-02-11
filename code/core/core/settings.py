@@ -48,12 +48,13 @@ LOCAL_APPS = [
     'posts',
     'story',
     'chat',
+    'notifications',
 ]
 
 THIRD_PARTY_APPS = [
     "rest_framework",
     'phonenumber_field',
-    "graphene_django"
+    "graphene_django",
 ]
 
 INSTALLED_APPS = BUILTIN_APPS + LOCAL_APPS + THIRD_PARTY_APPS
