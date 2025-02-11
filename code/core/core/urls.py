@@ -25,6 +25,7 @@ urlpatterns = [
     path('posts/', include('posts.apis.urls')),
     path('story/', include('story.apis.urls')),
     path('chat/', include('chat.apis.urls')),
+    path('notifications/', include('notifications.apis.urls')),
     
 ]
 

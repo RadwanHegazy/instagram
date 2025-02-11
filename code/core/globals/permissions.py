@@ -14,6 +14,11 @@ class IsStoryOwner(BaseIsObjOwner) :
     pass
 
 
+class IsNotificationReciver (BaseIsObjOwner) : 
+    
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj.reciver
+
 class IsMessageSender(IsAuthenticated) : 
 
     def has_object_permission(self, request, view, obj):
