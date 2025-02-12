@@ -49,6 +49,7 @@ LOCAL_APPS = [
     'story',
     'chat',
     'notifications',
+    'dj_notification',
 ]
 
 THIRD_PARTY_APPS = [
