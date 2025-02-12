@@ -1,19 +1,17 @@
 from abc import ABCMeta, abstractmethod
+from users.models import User
+from notifications.models import Notification
+from dj_notification.notify import send_notification
+from notifications.apis.serializers import GetNotificationSerializer
 
 class BaseNotification (metaclass=ABCMeta) : 
     """
-    Description :
-        Base Notification class for sending notifications.
-    
-    Params : 
-        - sender : User whos send the notification
-        - reciver : User whos recive the notification
-    
-    Methods : 
-        - send (Abstracted)
+    Description : Base Notification class for sending notifications.
+    Params : sender, reciver
+    Methods : send() 
     """
 
-    def __init__(self, sender, reciver):
+    def __init__(self, sender : User, reciver : User):
         self.sender = sender
         self.reciver = reciver
 
@@ -24,15 +22,42 @@ class BaseNotification (metaclass=ABCMeta) :
 class LikePostNotification (BaseNotification) : 
 
     def send(self):
-        print(f"sending like post from {self.sender.username} to {self.reciver.username}")
+        content = f"{self.sender.full_name} has liked your post !"
+        
+        # create the notification on the db
+        notification = Notification.objects.create(
+            sender=self.sender,
+            reciver=self.reciver,
+            content=content
+        )
+
+        notification.save()
+        serializer = GetNotificationSerializer(notification)
+
+        # send real-time notification for the user
+        send_notification(
+            to_user_id=self.reciver.id,
+            **serializer.data
+        )
 
 
 class FollowNotification (BaseNotification) : 
     
     def send(self):
-        print(f"{self.sender} Starts to follow {self.reciver}  !")
+        content = f"{self.sender.full_name} starts follow you."
+        
+        # create the notification on the db
+        notification = Notification.objects.create(
+            sender=self.sender,
+            reciver=self.reciver,
+            content=content
+        )
 
+        notification.save()
+        serializer = GetNotificationSerializer(notification)
 
-def send_notification(notification : BaseNotification) :
-    notification.send()
-
+        # send real-time notification for the user
+        send_notification(
+            to_user_id=self.reciver.id,
+            **serializer.data
+        )
