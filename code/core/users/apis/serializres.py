@@ -73,3 +73,66 @@ class UserSerializer(serializers.ModelSerializer) :
             'full_name',
             'picture',
         ]
+
+
+class BaseFollowUserSerializer (serializers.Serializer) : 
+    follow_user_id = serializers.IntegerField()
+
+    def validate(self, attrs):
+        follow_user_id = attrs.get('follow_user_id')
+        user = self.context.get('user')
+
+        follow_user = User.objects.filter(id=follow_user_id)
+
+        if not follow_user.exists() or follow_user_id == user.id:
+            raise ValidationError({
+                'message' : 'invalid user id'
+            })
+        
+        attrs['follow_user'] = follow_user.first()
+        attrs['user'] = user
+        return attrs
+    
+    def to_representation(self, instance):
+        return {}
+
+class FollowUserSerializer (BaseFollowUserSerializer) : 
+
+    def save(self, **kwargs):
+        follow_user:User = self.validated_data.get('follow_user')
+        user:User = self.validated_data.get('user')
+
+        if user not in follow_user.followers.all() : 
+            follow_user.followers.add(user)
+            follow_user.followers_count += 1
+
+            user.followings.add(follow_user)
+            user.following_count += 1
+
+            user.save()
+            follow_user.save()
+            
+            from globals.notifications import FollowNotification
+
+            notificaion = FollowNotification(
+                sender=user,
+                reciver=follow_user
+            )
+            
+            notificaion.send()
+
+class UnFollowUserSerializer (BaseFollowUserSerializer) : 
+
+    def save(self, **kwargs):
+        follow_user:User = self.validated_data.get('follow_user')
+        user:User = self.validated_data.get('user')
+
+        if user in follow_user.followers.all() : 
+            follow_user.followers.remove(user)
+            follow_user.followers_count -= 1
+
+            user.followings.remove(follow_user)
+            user.following_count -= 1
+
+            user.save()
+            follow_user.save()
