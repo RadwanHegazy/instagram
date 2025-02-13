@@ -2,6 +2,7 @@ from rest_framework import serializers
 from ..models import Post, User, PostImage
 from rest_framework.validators import ValidationError
 from users.apis.serializres import UserSerializer as PostUserSerializer
+from globals.notifications import LikePostNotification
 
 class PostImagesSerializer (serializers.ModelSerializer):
     class Meta:
@@ -60,3 +61,60 @@ class UpdatePostSerializer (serializers.ModelSerializer) :
     class Meta:
         model = Post
         fields = ['body']
+
+
+class BaseLikePostSerializer (serializers.Serializer) : 
+    post_id = serializers.IntegerField()
+
+    def validate(self, attrs):
+        post_id = attrs.get('post_id')
+        
+        try : 
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            raise ValidationError({
+                'message' : "post not found for this id"
+            }, code=404)
+        
+        attrs['post'] = post
+        attrs['liked_by'] = self.context.get('user')
+
+        return attrs
+
+    def to_representation(self, instance):
+        return {}
+
+class LikePostSerializer (BaseLikePostSerializer) : 
+    
+    def save(self, **kwargs):
+        post:Post = self.validated_data.get('post')
+        liked_by:User = self.validated_data.get('liked_by')
+
+        if liked_by not in post.likes_by.all() : 
+            post.likes_by_counter += 1
+            post.likes_by.add(liked_by)
+            post.save()
+
+        notification = LikePostNotification(
+            sender=liked_by,
+            reciver=post.owner
+        )
+        notification.send()
+
+        return post
+    
+ 
+
+class RemoveLikePostSerializer (BaseLikePostSerializer) : 
+
+    def save(self, **kwargs):
+        post:Post = self.validated_data.get('post')
+        liked_by:User = self.validated_data.get('liked_by')
+
+        if liked_by in post.likes_by.all() : 
+            post.likes_by_counter -= 1
+            post.likes_by.remove(liked_by)
+            post.save()
+
+        return post
+    
