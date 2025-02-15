@@ -93,7 +93,7 @@ class BaseFollowUserSerializer (serializers.Serializer) :
         attrs['user'] = user
         return attrs
     
-    def to_representation(self, instance):
+    def to_representation(self, *args, **kwargs):
         return {}
 
 class FollowUserSerializer (BaseFollowUserSerializer) : 
@@ -120,7 +120,8 @@ class FollowUserSerializer (BaseFollowUserSerializer) :
             )
             
             notificaion.send()
-
+        return 1
+    
 class UnFollowUserSerializer (BaseFollowUserSerializer) : 
 
     def save(self, **kwargs):
@@ -136,3 +137,5 @@ class UnFollowUserSerializer (BaseFollowUserSerializer) :
 
             user.save()
             follow_user.save()
+
+        return 1

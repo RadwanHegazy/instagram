@@ -3,6 +3,7 @@ from ..serializers import CreatePostSerializer
 from rest_framework.permissions import IsAuthenticated
 from ..serializers import LikePostSerializer, RemoveLikePostSerializer
 from rest_framework import status
+from rest_framework.response import Response
 
 class CreatePostView (CreateAPIView) : 
     serializer_class = CreatePostSerializer
@@ -25,9 +26,11 @@ class BaseLovePostView (CreateAPIView) :
         }
     
     def create(self, request, *args, **kwargs):
-        respose = super().create(request, *args, **kwargs)
-        respose.status_code = status.HTTP_204_NO_CONTENT
-        return respose
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)  # Handle validation errors
+        self.perform_create(serializer)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class LovePostView (BaseLovePostView) : 
     serializer_class = LikePostSerializer
