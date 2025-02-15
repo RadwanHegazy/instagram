@@ -1,7 +1,7 @@
 from rest_framework.generics import CreateAPIView
 from ..serializers import CreateStorySerializer
 from rest_framework.permissions import IsAuthenticated
-import json
+from rest_framework.response import Response
 
 class CreateStoryView (CreateAPIView) : 
     serializer_class = CreateStorySerializer
@@ -13,6 +13,7 @@ class CreateStoryView (CreateAPIView) :
         }
     
     def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        response.status_code = 204
-        return response
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)  # Handle validation errors
+        self.perform_create(serializer)
+        return Response(status=status.HTTP_204_NO_CONTENT)

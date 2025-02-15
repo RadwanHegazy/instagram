@@ -11,7 +11,7 @@ class NotificationConsumer (WebsocketConsumer) :
 
         if self.user.is_anonymous:
             self.close()
-            raise
+            return
         
 
         self.GROUP_NAME = f'notification__{self.user.id}'
@@ -22,10 +22,11 @@ class NotificationConsumer (WebsocketConsumer) :
 
 
     def disconnect(self, code):
-        async_to_sync(self.channel_layer.group_discard)(
-            self.GROUP_NAME,
-            self.channel_name,
-        )
+        if self.user.is_authenticated :
+            async_to_sync(self.channel_layer.group_discard)(
+                self.GROUP_NAME,
+                self.channel_name,
+            )
 
 
     def notification (self, data):

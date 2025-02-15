@@ -95,11 +95,11 @@ class LikePostSerializer (BaseLikePostSerializer) :
             post.likes_by.add(liked_by)
             post.save()
 
-        notification = LikePostNotification(
-            sender=liked_by,
-            reciver=post.owner
-        )
-        notification.send()
+            notification = LikePostNotification(
+                sender=liked_by,
+                reciver=post.owner
+            )
+            notification.send()
 
         return post
     
