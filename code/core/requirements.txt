@@ -25,6 +25,7 @@ django-phonenumber-field==8.0.0
 django-redis==5.4.0
 djangorestframework==3.15.2
 djangorestframework_simplejwt==5.4.0
+drf-yasg==1.21.8
 graphene==3.4.3
 graphene-django==3.2.2
 graphql-core==3.2.6
@@ -34,10 +35,12 @@ idna==3.10
 imageio==2.37.0
 imageio-ffmpeg==0.6.0
 incremental==24.7.2
+inflection==0.5.1
 kombu==5.4.2
 moviepy==1.0.3
 msgpack==1.1.0
 numpy==2.2.2
+packaging==24.2
 phonenumberslite==8.13.53
 Pillow==9.5.0
 proglog==0.1.10
@@ -52,6 +55,8 @@ PyJWT==2.9.0
 pyOpenSSL==25.0.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
+pytz==2025.1
+PyYAML==6.0.2
 redis==5.2.1
 requests==2.32.3
 service-identity==24.2.0
@@ -64,6 +69,7 @@ Twisted==24.11.0
 txaio==23.1.1
 typing_extensions==4.12.2
 tzdata==2024.2
+uritemplate==4.1.1
 urllib3==2.3.0
 vine==5.1.0
 wcwidth==0.2.13
