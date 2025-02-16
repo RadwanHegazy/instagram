@@ -56,6 +56,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     'phonenumber_field',
     "graphene_django",
+    'drf_yasg',
 ]
 
 INSTALLED_APPS = BUILTIN_APPS + LOCAL_APPS + THIRD_PARTY_APPS
@@ -161,7 +162,20 @@ REST_FRAMEWORK = {
     
     # for pagination
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    "PAGE_SIZE" : 10
+    "PAGE_SIZE" : 10,
+
+
+    # for rate-limiting
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '500/day',
+        'login' : '10/hr'
+    }
+    
 
 }
 
@@ -210,6 +224,7 @@ CELERY_BEAT_SCHEDULE = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "SIGNING_KEY": SECRET_KEY,
 }
 
 CHANNEL_LAYERS = {
@@ -220,3 +235,4 @@ CHANNEL_LAYERS = {
         },
     },
 }
+

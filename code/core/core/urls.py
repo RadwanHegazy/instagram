@@ -18,16 +18,32 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from core import settings
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+# Schema view for Swagger
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Instagram API Docs",
+        default_version='v1',
+        description="A clear description for each endpoint on the system.",
+    ),
+    public=True,
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/', include('users.apis.urls')),
-    path('posts/', include('posts.apis.urls')),
-    path('story/', include('story.apis.urls')),
-    path('chat/', include('chat.apis.urls')),
-    path('notifications/', include('notifications.apis.urls')),
-    
+    path('api/v1/user/', include('users.apis.urls')),
+    path('api/v1/posts/', include('posts.apis.urls')),
+    path('api/v1/story/', include('story.apis.urls')),
+    path('api/v1/chat/', include('chat.apis.urls')),
+    path('api/v1/notifications/', include('notifications.apis.urls')),   
+
+    path('__docs__/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
