@@ -2,6 +2,22 @@
 
 This is a Django-based backend project that replicates some of the core functionalities of Instagram. It includes user management, posts, stories, chat, and notifications.
 
+## Tools in this project
+- **Python :** Hight level programming language
+- **Django :**  Back-end framework.
+- **PostgreSQL :** SQL Databases
+- **Redis :** No-SQL db used for caching and message broker
+- **Gunicorn :** WSGI HTTP Server.
+- **Nginx :** Web server that runs on the os and forward the request to Django server and use it as load balancer
+- **Celery :** Tool for running the background tasks.
+- **Celery Beat :** Implement periodic tasks.
+- **JWT :** Used for tokenization
+- **REST APIs :** Used for create REST endpoints on the system except posts endpoints.
+- **GraphQL :** Type of APIs but i use it only in posts endpoints.
+- **Daphne :** Daphne is a HTTP, HTTP2 and WebSocket protocol server.
+- **Docker :** for continarize the project and run multiple images on it.
+
+
 ## Features
 
 - **User Management**: Register, login, and manage user profiles.
