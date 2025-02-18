@@ -7,7 +7,6 @@ This is a Django-based backend project that replicates some of the core function
 - **Django :**  Back-end framework.
 - **PostgreSQL :** SQL Databases
 - **Redis :** No-SQL db used for caching and message broker
-- **Gunicorn :** WSGI HTTP Server.
 - **Nginx :** Web server that runs on the os and forward the request to Django server and use it as load balancer
 - **Celery :** Tool for running the background tasks.
 - **Celery Beat :** Implement periodic tasks.
