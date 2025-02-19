@@ -2,6 +2,18 @@
 
 This is a Django-based backend project that replicates some of the core functionalities of Instagram. It includes user management, posts, stories, chat, and notifications.
 
+
+
+## Timeline
+- [Tools in this project](#tools-in-this-project)
+- [Features](#features)
+- [API Documentation](#api-documentation)
+- [API Main Endpoints](#api-endpoints)
+- [Web Socket Endpoints](#web-socket-endpoints)
+- [Installion](#installation)
+- [Running](#running)
+
+
 ## Tools in this project
 - **Python :** Hight level programming language
 - **Django :**  Back-end framework.
@@ -15,6 +27,7 @@ This is a Django-based backend project that replicates some of the core function
 - **GraphQL :** Type of APIs but i use it only in posts endpoints.
 - **Daphne :** Daphne is a HTTP, HTTP2 and WebSocket protocol server.
 - **Docker :** for continarize the project and run multiple images on it.
+
 
 
 ## Features
@@ -48,39 +61,43 @@ The API documentation is available using Swagger UI. You can access it at the fo
 
 
 
-## Setting Env file
 
-1. Create `.env` file in code/core folder
-2. set theses variables : 
+## Installation
+
+To set up this project locally, follow these steps:
+
+**Clone the repository**:
+```bash
+git clone https://github.com/RadwanHegazy/instagram
+```
+```bash
+cd instagram/code/core
+```
+
+## Running
+
+**NOTE :** Before running the project make sure to follow thees steps : 
+
+1. Create `.env` file
+
+2. Set these `variables` on it :
     ```bash
-    FB_CLIENT_ID = ""
-    FB_CLIENT_SECRET = ""
-    FRONTEND_END_SERVER_REDIRECT_URL = "http://localhost:8000/"
+    FB_CLIENT_ID = "<YOUR_FB_CLIENT_ID>"
+    FB_CLIENT_SECRET = "<YOUR_FB_CLIENT_SECRET>"
+    FRONTEND_END_SERVER_REDIRECT_URL = "http://localhost:8000/" # default
     
-    # You can use these variable with its values
+    # You can use these variable with its values if you running in docker
     REDIS_URL = "redis://redis:6379"
     CELERY_BROKER_URL = "redis://redis:6379/1"
     CELERY_RESULT_BACKEND = "redis://redis:6379/2"
     ```
 
-## Installation
 
-> NOTE: You must have docker to run this project.
-
-To set up this project locally, follow these steps:
-
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/RadwanHegazy/instagram
-    ```
-    ```bash
-    cd instagram/code/core
-    ```
+### Running Via Docker
+```bash
+docker-compose up
+```
 
 
-2. **Running Via Docker**
-    ```bash
-    docker-compose up
-    ```
 
 
